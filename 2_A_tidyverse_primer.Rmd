@@ -1,0 +1,55 @@
+---
+title: "2 A tidyverse primer"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tidymodels)
+```
+
+
+```{r}
+mtcars[order(mtcars$gear, mtcars$mpg), ]
+```
+
+```{r}
+mtcars %>% 
+  arrange(gear, mpg)
+```
+
+```{r}
+mtcars %>% 
+  ggplot(aes(x = wt, y = mpg)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm', se = FALSE, formula = y ~ x)
+```
+
+```{r}
+mtcars %>% 
+  summarise(ratios = log(mpg / wt))
+```
+
+```{r}
+map_dbl(head(mtcars$mpg), sqrt)
+```
+
+```{r}
+map2_dbl(mtcars$mpg, mtcars$wt, ~ log(.x / .y)) %>% 
+  head
+```
+
+```{r}
+library(lubridate)
+
+all_stations <- 
+  read_csv("http://bit.ly/raw-train-data-csv") %>% 
+  select(station = stationname, date, rides) %>% 
+  mutate(date = mdy(date), rides = rides / 1000) %>% 
+  group_by(date, station) %>% 
+  summarise(rides = max(rides), .groups = 'drop')
+
+all_stations %>% glimpse
+```
+
